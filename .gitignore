@@ -1,0 +1,5 @@
+# Node modules (don't push these)
+node_modules/
+
+# Environment variables
+.env
