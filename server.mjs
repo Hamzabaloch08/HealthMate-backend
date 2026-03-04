@@ -20,8 +20,7 @@ app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1", protect, protectedRoutes);
 
 const port = process.env.PORT || 4000;
-if (process.env.NODE_ENV !== "production") {
-  app.listen(port, () => console.log(`✅ Server running on port ${port}`));
-}
+
+app.listen(port, () => console.log(`✅ Server running on port ${port}`));
 
 export default app;

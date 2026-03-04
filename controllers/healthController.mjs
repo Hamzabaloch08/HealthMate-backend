@@ -6,21 +6,32 @@ const taskCollection = client.db("healthMateDB").collection("userHealth");
 // ---------------- Add Vitals ----------------
 export const addVitals = async (req, res) => {
   try {
-    const { bp, sugar, weight, heartRate, temperature, height, bmi, cholesterol } = req.body;
+    const { bloodPressure, bloodSugar, weight, heartRate, temperature, height, cholesterol, spo2 } = req.body;
     const id = req.user.id;
 
-    if (!bp && !sugar && !weight && !heartRate && !temperature && !height && !bmi && !cholesterol)
+    if (!bloodPressure && !bloodSugar && !weight && !heartRate && !temperature && !height && !cholesterol && !spo2)
       return res.status(400).json({ error: "At least one vital is required" });
 
     let vital = {}
-    if(bp)vital.bp = bp
-    if(sugar)vital.sugar = sugar
+    if(bloodPressure)vital.bloodPressure = bloodPressure
+    if(bloodSugar)vital.bloodSugar = bloodSugar
     if(weight)vital.weight = weight
     if(heartRate)vital.heartRate = heartRate
     if(temperature)vital.temperature = temperature
     if(height)vital.height = height
-    if(bmi)vital.bmi = bmi
     if(cholesterol)vital.cholesterol = cholesterol
+    if(spo2)vital.spo2 = spo2
+
+    const existingFields = Object.keys(vital);
+    const existing = await taskCollection.findOne({
+      userId: id,
+      $or: existingFields.map(field => ({ [field]: { $exists: true } })),
+    });
+
+    if (existing) {
+      const alreadyExists = existingFields.filter(field => existing[field] !== undefined);
+      return res.status(400).json({ error: `${alreadyExists.join(", ")} already added. Use edit to update.` });
+    }
 
     const vitalsEntry = {
       userId: id,
@@ -61,19 +72,19 @@ export const getVitals = async (req, res) => {
 export const editVitals = async (req, res) => {
   try {
     const { id } = req.params;
-    const { bp, sugar, weight, heartRate, temperature, height, bmi, cholesterol } = req.body;
+    const { bloodPressure, bloodSugar, weight, heartRate, temperature, height, cholesterol, spo2 } = req.body;
 
     if (!id) return res.status(400).json({ error: "Vitals ID required" });
 
     const updateData = {};
-    if (bp) updateData.bp = bp;
-    if (sugar) updateData.sugar = sugar;
+    if (bloodPressure) updateData.bloodPressure = bloodPressure;
+    if (bloodSugar) updateData.bloodSugar = bloodSugar;
     if (weight) updateData.weight = weight;
     if (heartRate) updateData.heartRate = heartRate;
     if (temperature) updateData.temperature = temperature;
     if (height) updateData.height = height;
-    if (bmi) updateData.bmi = bmi;
     if (cholesterol) updateData.cholesterol = cholesterol;
+    if (spo2) updateData.spo2 = spo2;
 
     if (Object.keys(updateData).length === 0)
       return res

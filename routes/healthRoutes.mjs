@@ -5,15 +5,15 @@ import { protect } from "../middleware/authMiddleware.mjs";
 const router = express.Router();
 
 // Add new vitals manually
-router.post("/add", addVitals);
+router.post("/", addVitals);
 
 // Get all vitals for a user
-router.get("/:userId", getVitals);
+router.get("/", getVitals);
 
 // Edit vitals by ID
-router.put("/edit/:id", editVitals);
+router.put("/:id", editVitals);
 
 // Delete vitals by ID
-router.delete("/delete/:id", deleteVitals);
+router.delete("/:id", deleteVitals);
 
 export default router;
