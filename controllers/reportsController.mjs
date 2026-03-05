@@ -100,13 +100,13 @@ export const editReport = async (req, res) => {
       { returnDocument: "after" }
     );
 
-    if (!result.value)
+    if (!result)
       return res.status(404).json({ error: "Report not found" });
 
     res.json({
       success: true,
       message: "Report updated successfully",
-      data: result.value,
+      data: result,
     });
   } catch (err) {
     console.error("Edit Report Error:", err);

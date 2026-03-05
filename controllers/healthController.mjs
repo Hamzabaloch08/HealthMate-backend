@@ -97,7 +97,7 @@ export const editVitals = async (req, res) => {
       { returnDocument: "after" }
     );
 
-    if (!result.value)
+    if (!result)
       return res
         .status(404)
         .json({ error: "Vitals not found or no change made" });
@@ -105,7 +105,7 @@ export const editVitals = async (req, res) => {
     res.json({
       success: true,
       message: "Vitals updated successfully",
-      data: result.value,
+      data: result,
     });
   } catch (err) {
     console.error("Edit Vitals Error:", err);
